@@ -5,188 +5,84 @@ import os
 API_KEY = 'U4eFBf4XnV+YdADZNn7EsA==q4NEVPb3NIUVrhoA'
 
 
+def get_user_choice_animal() -> str:
+    """
+    Prompts user for an animal choice.
+    :return: user_choice: str containing the animal choice.
+    """
+    user_choice = input("\nEnter the name of an animal: ")
+
+    return user_choice.strip()
+
+
 def load_data(animal_name: str) -> list | None:
     """
     Loads data from Animals API (API Ninjas).
     :param animal_name: str indicating the name of the animal to be loaded.
-    :return: all_data: list containing all data from the API call
+    :return:
+        all_data: list containing all data from the API call
+        None: if no data was loaded.
     """
     api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(animal_name)
     response = requests.get(api_url, headers={'X-Api-Key': API_KEY})
     if response.status_code == requests.codes.ok:
         all_data = response.json()
 
-        return all_data
+        if all_data:
+
+            return all_data
+
+        print("No data was loaded.")
+        return None
 
     print("Error:", response.status_code, response.text)
 
-
-def get_skin_types(all_animals: list) -> list:
-    """
-    Collects all skin types available in the data set.
-    :param all_animals: list containing all info on all animals.
-    :return: skin_types: list containing all skin types.
-    """
-    skin_types = []
-
-    for animal in all_animals:
-        if animal.get("characteristics", {}).get("skin_type") not in skin_types:
-            skin_types.append(animal.get("characteristics", {}).get("skin_type"))
-
-    return skin_types
-
-
-def get_user_choice_skin(skin_types: list) -> str:
-    """
-    Validates the skin choice given by the user.
-    :param skin_types: list containing all skin types.
-    :return: str containing the skin choice.
-    """
-    while True:
-        user_choice_skin = input("\nEnter a skin type: ").lower().strip()
-        if user_choice_skin in [skin_type.lower() for skin_type in skin_types]:
-
-            return user_choice_skin
-
-        print("Invalid skin type")
-
-
-def extract_animals_selection(all_animals: list, user_choice_skin: str) -> list:
-    """
-    Extracts the animals selection from the user choice skin type.
-    :param all_animals: list containing all info on all animals.
-    :param user_choice_skin: str containing the skin choice.
-    :return: selected_animals: list containing all selected animals.
-    """
-    selected_animals = []
-
-    for animal in all_animals:
-        if animal.get("characteristics", {}).get("skin_type").lower() == user_choice_skin:
-            selected_animals.append(animal)
-
-    return selected_animals
-
-
-def get_select_skin(all_animals: list) -> list:
-    """
-    Displays and gets the skin type from the user.
-    :param all_animals: list containing all info on all animals.
-    :return: selected_animals: list containing all selected animals.
-    """
-    skin_types = get_skin_types(all_animals)
-
-    print("\nHere are all the available skin types:")
-
-    for skin_type in skin_types:
-        print(f">>> {skin_type}")
-
-    user_choice_skin = get_user_choice_skin(skin_types)
-    selected_animals = extract_animals_selection(all_animals, user_choice_skin)
-
-    return selected_animals
-
-
-def get_user_choice_animals(all_animals: list):
-    """
-    Coordinates the entire selection of the user (i.e., all or some animals).
-    :param all_animals: list containing all info on all animals.
-    :return: all_animals or selected_animals: list containing all selected animals.
-    """
-    while True:
-        user_choice = input("\nDo you want all animals or select by skin type? (all/skin): ").lower().strip()
-        if user_choice == "all":
-
-            return all_animals
-
-        elif user_choice == "skin":
-
-            return get_select_skin(all_animals)
-
-        else:
-            print("Please enter either 'all' or 'skin'.")
+    return None
 
 
 def serialize_animal(animal: dict) -> str:
     """
-    Builds the entire string in html format for a given animal.
+    Builds the entire string in HTML format for a given animal.
     :param animal: dict containing all data from given animal.
-    :return: animals_cards: str containing all info of a given animal in html format.
+    :return: str containing all info of a given animal in HTML format.
     """
-    animals_cards = ''
+    name = animal.get('name', 'Name not found')
+    characteristics = animal.get('characteristics', {})
+    locations = ', '.join(animal.get('locations', ['Location not found']))
 
-    locations = animal.get('locations', ['Location not found'])
-    locations_string = ', '.join(locations)
+    type_info = f"<li><strong>Type:</strong> {characteristics.get('type', '').capitalize()}</li>" \
+        if characteristics.get('type') is not None else ''
 
-    animals_cards += '<li class="cards__item">\n'
-    animals_cards += ('<div class="card__title">'
-                      + animal.get('name', 'Name not found')
-                      + '</div>\n')
-    animals_cards += '<div class="card__text">'
-    animals_cards += '<ul>\n'
-    animals_cards += ('<li>'
-                      + '<strong>'
-                      + 'Skin Type:'
-                      + '</strong>'
-                      + ' '
-                      + animal.get('characteristics', {}).get('skin_type', 'Skin Type not found')
-                      + '</li>\n')
-    animals_cards += ('<li>'
-                      + '<strong>'
-                      + 'Diet:'
-                      + '</strong>'
-                      + ' '
-                      + animal.get('characteristics', {}).get('diet', 'Diet not found')
-                      + '</li>\n')
+    top_speed_info = f"<li><strong>Top Speed:</strong> {characteristics.get('top_speed')}</li>" \
+        if characteristics.get('top_speed') is not None else ''
 
-    if animal.get('characteristics', {}).get('type') is not None:
-        animals_cards += ('<li>'
-                          + '<strong>'
-                          + 'Type:'
-                          + '</strong>'
-                          + ' '
-                          + animal.get('characteristics', {}).get('type').capitalize()
-                          + '</li>\n')
-
-    animals_cards += ('<li>'
-                      + '<strong>'
-                      + 'Location(s):'
-                      + '</strong>'
-                      + ' '
-                      + f"{locations_string}"
-                      + '</li>\n')
-    animals_cards += ('<li>'
-                      + '<strong>'
-                      + 'Lifespan:'
-                      + '</strong>'
-                      + ' '
-                      + animal.get('characteristics', {}).get('lifespan', 'Lifespan not found')
-                      + '</li>\n')
-
-    if animal.get('characteristics', {}).get('top_speed') is not None:
-        animals_cards += ('<li>'
-                          + '<strong>'
-                          + 'Top Speed:'
-                          + '</strong>'
-                          + ' '
-                          + animal.get('characteristics', {}).get('top_speed')
-                          + '</li>\n')
-
-    animals_cards += '</ul>\n'
-    animals_cards += '</div>\n'
-    animals_cards += '</li>\n'
-
-    return animals_cards
+    animals_card = f"""
+    <li class="cards__item">
+        <div class="card__title">{name}</div>
+        <div class="card__text">
+            <ul>
+                <li><strong>Skin Type:</strong> {characteristics.get('skin_type', 'Skin Type not found')}</li>
+                <li><strong>Diet:</strong> {characteristics.get('diet', 'Diet not found')}</li>
+                {type_info}
+                <li><strong>Location(s):</strong> {locations}</li>
+                <li><strong>Lifespan:</strong> {characteristics.get('lifespan', 'Lifespan not found')}</li>
+                {top_speed_info}
+            </ul>
+        </div>
+    </li>
+    """
+    return animals_card
 
 
-def get_animal_cards(selected_animals: list) -> str:
+def get_animal_cards(animals_data: list) -> str:
     """
     Builds the entire string in html format for all selected animals.
-    :param selected_animals: list containing all info from selected animals.
+    :param animals_data: list containing all info from selected animals.
     :return: animals_cards: str containing all info of all selected animals in html format.
     """
     animals_cards = ''
 
-    for animal in selected_animals:
+    for animal in animals_data:
         animals_cards += serialize_animal(animal)
 
     return animals_cards
@@ -230,7 +126,7 @@ def build_repository_page(final_content: str) -> None:
     with open(file_path, "w", encoding="utf-8") as handle:
         handle.write(final_content)
 
-    print(f"Page has been created at {file_path}")
+    print(f"Website was successfully generated at {file_path}")
 
 
 def get_user_choice_loop() -> bool:
@@ -254,12 +150,14 @@ def get_user_choice_loop() -> bool:
 
 def main():
     while True:
-        animals_data = load_data('Fox')
-        #selected_animals = get_user_choice_animals(animals_data)
-        animals_cards = get_animal_cards(animals_data)
-        page_template = open_template(os.path.join('templates', 'animals_template.html'))
-        final_page_content = inject_animal_cards(page_template, animals_cards)
-        build_repository_page(final_page_content)
+        animal_name = get_user_choice_animal()
+        animals_data = load_data(animal_name)
+        if animals_data:
+            #selected_animals = get_user_choice_animals(animals_data)
+            animals_cards = get_animal_cards(animals_data)
+            page_template = open_template(os.path.join('templates', 'animals_template.html'))
+            final_page_content = inject_animal_cards(page_template, animals_cards)
+            build_repository_page(final_page_content)
 
         if not get_user_choice_loop():
             break
