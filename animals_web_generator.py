@@ -10,17 +10,22 @@ def get_user_choice_animal() -> str:
     Prompts user for an animal choice.
     :return: user_choice: str containing the animal choice.
     """
-    user_choice = input("\nEnter the name of an animal: ")
+    while True:
+        user_choice = input("\nEnter the name of an animal: ")
+        if len(user_choice) > 0:
 
-    return user_choice.strip()
+            return user_choice.strip()
+
+        print("\nPlease enter a valid choice.")
 
 
-def load_data(animal_name: str) -> list | None:
+def load_data(animal_name: str) -> list | str | None:
     """
     Loads data from Animals API (API Ninjas).
     :param animal_name: str indicating the name of the animal to be loaded.
     :return:
         all_data: list containing all data from the API call
+        no_data: str containing an error message signaling the animal doesn't seem to exist.
         None: if no data was loaded.
     """
     api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(animal_name)
@@ -32,8 +37,10 @@ def load_data(animal_name: str) -> list | None:
 
             return all_data
 
-        print("No data was loaded.")
-        return None
+        if not all_data:
+            no_data = "<h1>The animal '{}' doesn't exist - No data was loaded!</h1>".format(animal_name)
+
+            return no_data
 
     print("Error:", response.status_code, response.text)
 
@@ -100,14 +107,14 @@ def open_template(file_path: str) -> str:
         return page_template
 
 
-def inject_animal_cards(page_template: str, animal_cards: str) -> str:
+def inject_website_content(page_template: str, website_content: str) -> str:
     """
     Replaces the placeholder from the html template with data extracted from the json file (i.e., the animal cards).
     :param page_template: str containing all info from the html template file.
-    :param animal_cards: str containing all info from all selected animals in html format.
+    :param website_content: str containing all info from all selected animals in html format.
     :return: final_page_content: str containing the final page in html format.
     """
-    final_page_content = page_template.replace("__REPLACE_ANIMALS_INFO__", animal_cards)
+    final_page_content = page_template.replace("__REPLACE_ANIMALS_INFO__", website_content)
 
     return final_page_content
 
@@ -152,12 +159,20 @@ def main():
     while True:
         animal_name = get_user_choice_animal()
         animals_data = load_data(animal_name)
-        if animals_data:
-            #selected_animals = get_user_choice_animals(animals_data)
+
+        if not animals_data:
+            if not get_user_choice_loop():
+                break
+
+        website_content = animals_data
+
+        if type(animals_data) is list:
             animals_cards = get_animal_cards(animals_data)
-            page_template = open_template(os.path.join('templates', 'animals_template.html'))
-            final_page_content = inject_animal_cards(page_template, animals_cards)
-            build_repository_page(final_page_content)
+            website_content = animals_cards
+
+        page_template = open_template(os.path.join('templates', 'animals_template.html'))
+        final_page_content = inject_website_content(page_template, website_content)
+        build_repository_page(final_page_content)
 
         if not get_user_choice_loop():
             break
