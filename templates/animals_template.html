@@ -2,80 +2,102 @@
     <head>
         <meta charset="UTF-8">
         <style>
-        @gray-darker:               #444444;
-        @gray-dark:                 #696969;
-        @gray:                      #999999;
-        @gray-light:                #cccccc;
-        @gray-lighter:              #ececec;
-        @gray-lightest:             lighten(@gray-lighter,4%);
+            :root {
+                --gray-darker: #444444;
+                --gray-dark: #696969;
+                --gray: #999999;
+                --gray-light: #cccccc;
+                --gray-lighter: #ececec;
+                --gray-lightest: #f5f5f5;
+            }
 
+            html {
+                background: linear-gradient(135deg, #e0e0e0 0%, #a8a8a8 100%);
+                min-height: 100%;
+            }
 
-        html {
-          background-color: #c6c1c1;
-        }
+            h1 {
+                text-align: center;
+                font-size: 2.5rem;
+                font-weight: 300;
+                color: var(--gray-darker);
+                margin: 1rem 0;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            }
 
-        h1 {
-            text-align: center;
-            font-size: 40pt;
-            font-weight: normal;
-        }
+            body {
+                font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-style: normal;
+                font-weight: 400;
+                letter-spacing: 0;
+                padding: 1rem;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                -moz-font-feature-settings: "liga" on;
+                width: 900px;
+                margin: auto;
+                background-color: white;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+            }
 
-        body {
-          font-family: 'Roboto','Helvetica Neue', Helvetica, Arial, sans-serif;
-          font-style: normal;
-          font-weight: 400;
-          letter-spacing: 0;
-          padding: 1rem;
-          text-rendering: optimizeLegibility;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          -moz-font-feature-settings: "liga" on;
-          width: 900px;
-          margin: auto;
-        }
+            ul {
+                padding-left: 1.5rem;
+                margin-bottom: 1rem;
+                list-style-type: disc;
+                color: var(--gray-darker);
+                font-size: 1rem;
+                line-height: 1.6;
+            }
 
-        ul {
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-            list-style-type: disc;
-            color: #444444;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
+            li {
+                margin-bottom: 0.5rem;
+            }
 
-        li {
-            margin-bottom: 0.5rem;
-        }
+            .cards {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
 
-        .cards {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
+            .cards__item {
+                background-color: white;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                overflow: hidden;
+                padding: 1.5rem;
+                margin: 0.5rem 0;
+                width: 80%;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
 
-        .cards__item {
-          background-color: white;
-          border-radius: 0.25rem;
-          box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
-          overflow: hidden;
-          padding: 1rem;
-          margin: 50px;
-        }
+            .cards__item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            }
 
-        .card__title {
-          color: @gray-dark;
-          font-size: 1.25rem;
-          font-weight: 300;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-        }
+            .card__title {
+                color: var(--gray-dark);
+                font-size: 1.5rem;
+                font-weight: 300;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                border-bottom: 1px solid var(--gray-light);
+                padding-bottom: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
 
-        .card__text {
-          flex: 1 1 auto;
-          font-size: 0.95rem;
-          line-height: 2;
-          margin-bottom: 1.25rem;
-        }
+            .card__text {
+                flex: 1 1 auto;
+                font-size: 1rem;
+                line-height: 1.8;
+                margin-bottom: 1.25rem;
+                color: var(--gray-darker);
+            }
         </style>
     </head>
     <body>

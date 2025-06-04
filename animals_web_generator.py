@@ -12,7 +12,7 @@ def get_user_choice_animal() -> str:
     """
     while True:
         user_choice = input("\nEnter the name of an animal: ")
-        if len(user_choice) > 0:
+        if len(user_choice.strip()) > 0:
 
             return user_choice.strip()
 
