@@ -1,9 +1,6 @@
 import requests
 
 
-API_KEY = 'U4eFBf4XnV+YdADZNn7EsA==q4NEVPb3NIUVrhoA'
-
-
 def fetch_data(animal_name: str) -> list | str | None:
     """
     Fetches data from Animals API (API Ninjas) for the given animal.
