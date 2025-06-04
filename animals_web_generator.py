@@ -1,17 +1,24 @@
-import json
+import requests
 import os
 
 
-def load_data(file_path: str) -> list:
+API_KEY = 'U4eFBf4XnV+YdADZNn7EsA==q4NEVPb3NIUVrhoA'
+
+
+def load_data(animal_name: str) -> list | None:
     """
-    Loads data from json file.
-    :param file_path: str indicating the path to the json file
-    :return: all_data: list containing all data from the json file
+    Loads data from Animals API (API Ninjas).
+    :param animal_name: str indicating the name of the animal to be loaded.
+    :return: all_data: list containing all data from the API call
     """
-    with open(file_path, "r", encoding="utf-8") as handle:
-        all_data = json.load(handle)
+    api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(animal_name)
+    response = requests.get(api_url, headers={'X-Api-Key': API_KEY})
+    if response.status_code == requests.codes.ok:
+        all_data = response.json()
 
         return all_data
+
+    print("Error:", response.status_code, response.text)
 
 
 def get_skin_types(all_animals: list) -> list:
@@ -247,9 +254,9 @@ def get_user_choice_loop() -> bool:
 
 def main():
     while True:
-        animals_data = load_data(os.path.join('data', 'animals_data.json'))
-        selected_animals = get_user_choice_animals(animals_data)
-        animals_cards = get_animal_cards(selected_animals)
+        animals_data = load_data('Fox')
+        #selected_animals = get_user_choice_animals(animals_data)
+        animals_cards = get_animal_cards(animals_data)
         page_template = open_template(os.path.join('templates', 'animals_template.html'))
         final_page_content = inject_animal_cards(page_template, animals_cards)
         build_repository_page(final_page_content)
