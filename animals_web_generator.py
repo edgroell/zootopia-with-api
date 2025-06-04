@@ -1,8 +1,5 @@
-import requests
 import os
-
-
-API_KEY = 'U4eFBf4XnV+YdADZNn7EsA==q4NEVPb3NIUVrhoA'
+import data_fetcher
 
 
 def get_user_choice_animal() -> str:
@@ -17,34 +14,6 @@ def get_user_choice_animal() -> str:
             return user_choice.strip()
 
         print("\nPlease enter a valid choice.")
-
-
-def load_data(animal_name: str) -> list | str | None:
-    """
-    Loads data from Animals API (API Ninjas).
-    :param animal_name: str indicating the name of the animal to be loaded.
-    :return:
-        all_data: list containing all data from the API call
-        no_data: str containing an error message signaling the animal doesn't seem to exist.
-        None: if no data was loaded.
-    """
-    api_url = 'https://api.api-ninjas.com/v1/animals?name={}'.format(animal_name)
-    response = requests.get(api_url, headers={'X-Api-Key': API_KEY})
-    if response.status_code == requests.codes.ok:
-        all_data = response.json()
-
-        if all_data:
-
-            return all_data
-
-        if not all_data:
-            no_data = "<h1>The animal '{}' doesn't exist - No data was loaded!</h1>".format(animal_name)
-
-            return no_data
-
-    print("Error:", response.status_code, response.text)
-
-    return None
 
 
 def serialize_animal(animal: dict) -> str:
@@ -158,7 +127,7 @@ def get_user_choice_loop() -> bool:
 def main():
     while True:
         animal_name = get_user_choice_animal()
-        animals_data = load_data(animal_name)
+        animals_data = data_fetcher.fetch_data(animal_name)
 
         if not animals_data:
             if not get_user_choice_loop():
